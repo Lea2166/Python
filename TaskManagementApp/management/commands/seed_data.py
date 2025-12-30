@@ -4,7 +4,8 @@ from TaskManagementApp.models import Teams, Task, Profile
 import random
 from datetime import datetime, timedelta
 
-
+#python manage.py flush
+#python manage.py seed_data
 class Command(BaseCommand):
     help = 'ממלא את הדאטה-בייס בנתונים יפים לבדיקה'
 

@@ -19,6 +19,7 @@ urlpatterns = [
     path('add/', views.add_task, name='add_task'),
     
     # אל תשכחו להוריד את ה-Comments מהעריכה והמחיקה כשתהיו מוכנות:
-     path('edit/<int:task_id>/', views.edit_task, name='edit_task'),
+    path('edit/<int:task_id>/', views.edit_task, name='edit_task'),
     path('delete/<int:task_id>/', views.delete_task, name='delete_task'),
+    path('logout/', views.logout_view, name='logout'),
 ]

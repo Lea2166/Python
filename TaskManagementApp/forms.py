@@ -11,9 +11,10 @@ class TaskForm(forms.ModelForm):
             'Description': forms.Textarea(attrs={'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none', 'rows': 3}),
             # הגדרת לוח השנה
             'Due_Date': forms.DateInput(attrs={
-                'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none custom-calendar',
-                'type': 'date'
-            }),
+    'class': 'bg-slate-800 border border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none transition-all custom-calendar-input',
+    'type': 'date',
+    'placeholder': 'בחר תאריך יעד...'
+}),
         }
 class AdminTaskForm(forms.ModelForm):
     # הוספת שדות בחירה עם עיצוב כהה

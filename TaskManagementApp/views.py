@@ -1,6 +1,8 @@
 from contextlib import nullcontext
 
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from .decorators import admin_only
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -9,46 +11,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import TaskForm, AdminTaskForm,CompleteProfileForm
-
-
-@login_required
-# def task_list(request):
-#     user_profile = request.user.profile
-#     user_team = user_profile.team
-#     if user_team is None:
-#         return redirect(complete_profile)
-#
-#     tasks = Task.objects.filter(Teams=user_team).order_by('Due_Date')
-#
-#     # לוגיקת סינון
-#     owner_filter = request.GET.get('owner', 'all')
-#     if owner_filter == 'mine':
-#         tasks = tasks.filter(AssignedUser=request.user)
-#
-#     status_filter = request.GET.get('status', 'all')
-#     if status_filter != 'all':
-#         tasks = tasks.filter(Status=status_filter)
-#
-#     # רשימות סינון למניעת שגיאת TemplateSyntaxError
-#     owner_options = [('all', 'כל הצוות'), ('mine', 'המשימות שלי')]
-#     status_options = [
-#         ('all', 'הכל'),
-#         ('NEW', 'חדש'),
-#         ('IN_PROGRESS', 'בביצוע'),
-#         ('COMPLETED', 'הושלם')
-#     ]
-#
-#     context = {
-#         'tasks': tasks,
-#         'team_name': user_team.Name,
-#         'owner_filter': owner_filter,
-#         'status_filter': status_filter,
-#         'owner_options': owner_options,
-#         'status_options': status_options,
-#         'user_role': user_profile.role,
-#     }
-#     return render(request, 'AllTasks.html', context)
-#
 
 def login_view(request):
     if request.method == 'POST':
@@ -76,8 +38,7 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
-
-
+@login_required
 def claim_task(request, task_id):
     task = get_object_or_404(Task, Id=task_id)
 
@@ -87,13 +48,14 @@ def claim_task(request, task_id):
 
     print(f"DEBUG: Task {task.Name} assigned to {request.user.username}")
     return redirect('alltasks')
+@login_required
 def finish_task(request, task_id):
     task = get_object_or_404(Task, Id=task_id)
     task.Status = 'COMPLETED'
     task.save()
     return redirect('alltasks')
 
-
+@login_required
 def task_list(request):
     user_profile = request.user.profile
 
@@ -126,9 +88,6 @@ def task_list(request):
         'user_role': user_profile.role,
     }
     return render(request, 'AllTasks.html', context)
-
-
-@login_required
 @login_required
 def complete_profile(request):
     profile = request.user.profile
@@ -153,6 +112,8 @@ def complete_profile(request):
         'all_teams': all_teams,
         'user_name': request.user.username
     })
+@login_required
+@admin_only
 def add_task(request):
     is_admin = request.user.profile.role == 'ADMIN'
     form_class = AdminTaskForm if is_admin else TaskForm
@@ -169,8 +130,8 @@ def add_task(request):
     else:
         form = form_class()
     return render(request, 'task_form.html', {'form': form, 'title': 'יצירת משימה חדשה'})
-
-
+@login_required
+@admin_only
 def edit_task(request, task_id):
     task = get_object_or_404(Task, Id=task_id)
 
@@ -185,7 +146,7 @@ def edit_task(request, task_id):
     else:
         form = TaskForm(instance=task)
     return render(request, 'task_form.html', {'form': form, 'title': 'עריכת משימה'})
-
+@admin_only
 @login_required
 def delete_task(request, task_id):
     """מחיקת משימה - רק אם לא משויכת לאף עובד"""
@@ -196,3 +157,8 @@ def delete_task(request, task_id):
         task.delete()
 
     return redirect('alltasks')
+@login_required
+def logout_view(request):
+    logout(request) # מוחק את ה-Session של המשתמש
+    messages.info(request, "התנתקת מהמערכת בהצלחה.")
+    return redirect('/')

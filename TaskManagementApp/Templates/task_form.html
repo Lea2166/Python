@@ -1,29 +1,144 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<div class="min-h-[80vh] flex items-center justify-center bg-slate-950 p-6">
-    <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl">
-        <h2 class="text-3xl font-black text-white mb-8 text-center tracking-tight">
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">{{ title }}</span>
-        </h2>
-        
-        <form method="post" class="space-y-6 text-right" dir="rtl">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase mr-1">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-            {% endfor %}
-            
-            <div class="pt-4 flex gap-4">
-                <button type="submit" class="flex-1 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-bold rounded-xl group bg-gradient-to-br from-purple-600 to-blue-500 text-white">
-                    <span class="relative px-6 py-3 transition-all ease-in duration-75 bg-slate-900 rounded-xl group-hover:bg-transparent w-full">שמירה</span>
-                </button>
-                <a href="{% url 'alltasks' %}" class="px-6 py-3 bg-slate-800 text-slate-400 rounded-xl hover:bg-slate-700 transition-all text-sm font-bold">ביטול</a>
+<style>
+    /* הגדרה גלובלית לצבעי מערכת */
+    :root {
+        color-scheme: dark !important;
+    }
+
+    /* תיקון צבעים בלוח השנה - פתרון הבעיה מהתמונה */
+    .flatpickr-calendar {
+        background: #1e293b !important; /* bg-slate-800 */
+        border: 1px solid #334155 !important;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6) !important;
+        border-radius: 1.5rem !important;
+        direction: rtl !important; /* מוודא כיוון נכון בתוך הלוח */
+    }
+
+    /* הפיכת החודש והשנה ללבן בוהק */
+    .flatpickr-current-month {
+        color: #ffffff !important;
+        font-size: 1.1rem !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 5px !important;
+        padding-top: 10px !important;
+    }
+
+    .flatpickr-monthDropdown-months, .cur-year, .flatpickr-month {
+        color: #ffffff !important;
+        fill: #ffffff !important;
+        font-weight: 800 !important;
+    }
+
+    /* תיקון צבע החיצים (ימין ושמאל) */
+    .flatpickr-prev-month svg, .flatpickr-next-month svg {
+        fill: #a855f7 !important; /* סגול */
+    }
+
+    .flatpickr-weekday {
+        color: #94a3b8 !important; /* slate-400 */
+        font-weight: bold !important;
+    }
+
+    .flatpickr-day {
+        color: #f1f5f9 !important;
+        border-radius: 12px !important;
+    }
+
+    .flatpickr-day.selected {
+        background: #a855f7 !important;
+        border-color: #a855f7 !important;
+    }
+
+    /* עיצוב הכותרת של הדף */
+    .premium-header-icon {
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2));
+        border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    /* ביטול ברירת המחדל של הדפדפן */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        display: none !important;
+    }
+</style>
+
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6 w-full" dir="rtl">
+    <div class="max-w-xl w-full animate-in fade-in zoom-in duration-700">
+
+        <div class="text-center mb-10">
+            <div class="inline-flex p-5 rounded-3xl premium-header-icon mb-6">
+                <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
             </div>
-        </form>
+            <h1 class="text-5xl font-black text-white tracking-tighter mb-3">{{ title }}</h1>
+            <p class="text-slate-400 font-medium text-lg italic">Enterprise Task Management</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-[3rem] p-10 md:p-14 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/15 blur-[100px] rounded-full"></div>
+
+            <form method="post" class="space-y-8 relative text-right">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="space-y-3 group">
+                    <label class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mr-1 group-focus-within:text-purple-400 transition-colors">
+                        {{ field.label }}
+                    </label>
+                    <div class="relative flex items-center">
+                        {{ field }}
+
+                        {% if 'Due_Date' in field.name or 'date' in field.field.widget.attrs.type %}
+                            <div class="absolute left-5 text-purple-500 pointer-events-none group-focus-within:scale-110 transition-transform">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="pt-8 flex flex-col sm:flex-row gap-5">
+                    <button type="submit" class="flex-[2] py-5 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-purple-50 transition-all transform hover:scale-[1.02] shadow-xl">
+                        שמור ועדכן
+                    </button>
+                    <a href="{% url 'alltasks' %}" class="flex-1 px-8 py-5 bg-slate-800 text-slate-400 rounded-2xl text-center font-bold text-sm hover:bg-slate-700 border border-slate-700 transition-all">
+                        ביטול
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/he.js"></script>
+<script>
+    flatpickr("input[type='date']", {
+        locale: "he",
+        dateFormat: "Y-m-d",
+        disableMobile: "true"
+    });
+</script>
+
+<style>
+    /* הלבשת עיצוב על שדות הקלט */
+    input, textarea, select {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: white !important;
+        border-radius: 1.25rem !important;
+        padding: 1.25rem 1.25rem 1.25rem 3.5rem !important;
+        width: 100% !important;
+        outline: none !important;
+        font-size: 1rem !important;
+    }
+</style>
 {% endblock %}
