@@ -21,8 +21,14 @@ from TaskManagementApp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('alltasks/',views.task_list,name='alltasks'),
+    path('NoTeam',views.NoTeams,name='NoTeam'),
+path('claim-task/<int:task_id>/', views.claim_task, name='claim_task'),
+path('finish_task/<int:task_id>/', views.finish_task, name='finish_task'),
 
     # דף התחברות מוכן של דג'אנגו
     path('login/', views.login_view, name='login'),
     path('register/', views.register, name='register'),
+    path('add/', views.add_task, name='add_task'),
+    path('edit/<int:task_id>/', views.edit_task, name='edit_task'),
+    path('delete/<int:task_id>/', views.delete_task, name='delete_task'),
 ]
