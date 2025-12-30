@@ -34,6 +34,7 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, 'login.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -41,7 +42,7 @@ def register(request):
             user = form.save()
             Profile.objects.create(user=user)
             login(request, user)
-            return redirect('task_list')
+            return redirect('alltasks')
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
