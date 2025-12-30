@@ -62,7 +62,7 @@ def task_list(request):
     # מנהל רואה הכל כברירת מחדל, עובד רואה רק את הצוות שלו
     if user_profile.role == 'ADMIN':
         tasks = Task.objects.all().order_by('Due_Date')
-        team_name = "כל המשימות במערכת"
+        team_name = "All System Tasks"
     else:
         if user_profile.team is None and user_profile.role != 'ADMIN':
             return redirect(complete_profile)
@@ -83,8 +83,8 @@ def task_list(request):
         'team_name': team_name,
         'owner_filter': owner_filter,
         'status_filter': status_filter,
-        'owner_options': [('all', 'הכל'), ('mine', 'שלי')],
-        'status_options': [('all', 'הכל'), ('NEW', 'חדש'), ('IN_PROGRESS', 'בביצוע'), ('COMPLETED', 'הושלם')],
+        'owner_options': [('all','All'), ('mine','Mine')],
+        'status_options': [('all','All'), ('NEW','new'), ('IN_PROGRESS','in_progress'), ('COMPLETED','completed')],
         'user_role': user_profile.role,
     }
     return render(request, 'AllTasks.html', context)
@@ -98,7 +98,6 @@ def complete_profile(request):
 
         if selected_role:
             profile.role = selected_role
-            # אם הוא עובד - נשמור את הצוות. אם הוא מנהל - נשמור None
             if selected_role == 'EMPLOYEE' and selected_team_id:
                 profile.team = Teams.objects.get(Id=selected_team_id)
             else:

@@ -4,70 +4,118 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-    /* הגדרה גלובלית לצבעי מערכת */
     :root {
         color-scheme: dark !important;
     }
 
-    /* תיקון צבעים בלוח השנה - פתרון הבעיה מהתמונה */
+    /* Flatpickr Calendar Styling */
     .flatpickr-calendar {
-        background: #1e293b !important; /* bg-slate-800 */
+        background: #1e293b !important;
         border: 1px solid #334155 !important;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6) !important;
         border-radius: 1.5rem !important;
-        direction: rtl !important; /* מוודא כיוון נכון בתוך הלוח */
+        direction: ltr !important; /* Set to LTR for English */
+        width: 310px !important;
     }
 
-    /* הפיכת החודש והשנה ללבן בוהק */
+    /* Header styling: Month and Year */
     .flatpickr-current-month {
-        color: #ffffff !important;
-        font-size: 1.1rem !important;
         display: flex !important;
-        justify-content: center !important;
+        flex-direction: row !important; /* Standard English direction */
         align-items: center !important;
-        gap: 5px !important;
-        padding-top: 10px !important;
-    }
-
-    .flatpickr-monthDropdown-months, .cur-year, .flatpickr-month {
-        color: #ffffff !important;
-        fill: #ffffff !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        color: white !important;
+        padding: 5px 0 !important;
         font-weight: 800 !important;
     }
 
-    /* תיקון צבע החיצים (ימין ושמאל) */
+    /* Year Input Styling */
+    .numInputWrapper {
+        width: 65px !important;
+    }
+    .numInputWrapper input.cur-year {
+        background: transparent !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 800 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .numInputWrapper span {
+        border-left: 1px solid rgba(255,255,255,0.1) !important;
+    }
+
+    /* Month Dropdown Styling */
+    .flatpickr-monthDropdown-months {
+        background-color: #1e293b !important;
+        color: white !important;
+        font-weight: 800 !important;
+        border: none !important;
+        padding: 2px 8px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+    }
+
+    /* Arrow Styling */
     .flatpickr-prev-month svg, .flatpickr-next-month svg {
-        fill: #a855f7 !important; /* סגול */
+        fill: #a855f7 !important;
+        transition: transform 0.2s;
+    }
+    .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
+        transform: scale(1.2);
     }
 
+    /* Weekdays Styling */
     .flatpickr-weekday {
-        color: #94a3b8 !important; /* slate-400 */
-        font-weight: bold !important;
+        color: #94a3b8 !important;
+        font-weight: 700 !important;
     }
 
+    /* Day Numbers Styling */
     .flatpickr-day {
-        color: #f1f5f9 !important;
-        border-radius: 12px !important;
+        color: white !important;
+        border-radius: 10px !important;
     }
-
+    .flatpickr-day.today {
+        border-color: #a855f7 !important;
+    }
     .flatpickr-day.selected {
         background: #a855f7 !important;
         border-color: #a855f7 !important;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
     }
 
-    /* עיצוב הכותרת של הדף */
+    /* Hide default browser indicator */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        display: none !important;
+    }
+
+    /* Premium Input Styling */
+    input, textarea, select {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: white !important;
+        border-radius: 1.25rem !important;
+        padding: 1.25rem 1.25rem 1.25rem 3.5rem !important;
+        width: 100% !important;
+        outline: none !important;
+        font-size: 1rem !important;
+        transition: all 0.3s;
+    }
+    input:focus {
+        border-color: #a855f7 !important;
+        box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1) !important;
+    }
+
     .premium-header-icon {
         background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2));
         border: 1px solid rgba(168, 85, 247, 0.3);
     }
-
-    /* ביטול ברירת המחדל של הדפדפן */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        display: none !important;
-    }
 </style>
 
-<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6 w-full" dir="rtl">
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6 w-full" dir="ltr">
     <div class="max-w-xl w-full animate-in fade-in zoom-in duration-700">
 
         <div class="text-center mb-10">
@@ -83,12 +131,12 @@
         <div class="bg-slate-900 border border-slate-800 rounded-[3rem] p-10 md:p-14 shadow-2xl relative overflow-hidden backdrop-blur-xl">
             <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-600/15 blur-[100px] rounded-full"></div>
 
-            <form method="post" class="space-y-8 relative text-right">
+            <form method="post" class="space-y-8 relative text-left">
                 {% csrf_token %}
 
                 {% for field in form %}
                 <div class="space-y-3 group">
-                    <label class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mr-1 group-focus-within:text-purple-400 transition-colors">
+                    <label class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-purple-400 transition-colors">
                         {{ field.label }}
                     </label>
                     <div class="relative flex items-center">
@@ -107,10 +155,10 @@
 
                 <div class="pt-8 flex flex-col sm:flex-row gap-5">
                     <button type="submit" class="flex-[2] py-5 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-purple-50 transition-all transform hover:scale-[1.02] shadow-xl">
-                        שמור ועדכן
+                        Save Changes
                     </button>
                     <a href="{% url 'alltasks' %}" class="flex-1 px-8 py-5 bg-slate-800 text-slate-400 rounded-2xl text-center font-bold text-sm hover:bg-slate-700 border border-slate-700 transition-all">
-                        ביטול
+                        Cancel
                     </a>
                 </div>
             </form>
@@ -119,26 +167,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/he.js"></script>
 <script>
     flatpickr("input[type='date']", {
-        locale: "he",
         dateFormat: "Y-m-d",
         disableMobile: "true"
     });
 </script>
-
-<style>
-    /* הלבשת עיצוב על שדות הקלט */
-    input, textarea, select {
-        background-color: #1e293b !important;
-        border: 1px solid #334155 !important;
-        color: white !important;
-        border-radius: 1.25rem !important;
-        padding: 1.25rem 1.25rem 1.25rem 3.5rem !important;
-        width: 100% !important;
-        outline: none !important;
-        font-size: 1rem !important;
-    }
-</style>
 {% endblock %}

@@ -1,40 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6" dir="rtl">
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6 w-full" dir="ltr">
     <div class="max-w-md w-full animate-login">
-        
+
         <div class="text-center mb-10">
             <div class="inline-flex p-4 rounded-3xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-4 shadow-lg shadow-blue-500/10">
                 <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                 </svg>
             </div>
-            <h1 class="text-3xl font-black text-white tracking-tight">ברוכים השבים</h1>
-            <p class="text-slate-400 mt-2 font-medium">התחברו כדי לנהל את המשימות שלכם</p>
+            <h1 class="text-3xl font-black text-white tracking-tight">Welcome Back</h1>
+            <p class="text-slate-400 mt-2 font-medium">Log in to manage your tasks</p>
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
             <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-600/10 blur-[80px] rounded-full"></div>
-            
+
             <form method="post" class="space-y-6 relative django-custom-form">
                 {% csrf_token %}
-                
-                <div class="space-y-4 text-right">
+
+                <div class="space-y-4 text-left">
                     {{ form.as_p }}
                 </div>
 
                 <button type="submit" class="w-full relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-black rounded-xl group bg-gradient-to-br from-blue-600 to-purple-500 text-white transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20 mt-4">
                     <span class="relative px-6 py-4 transition-all ease-in duration-75 bg-slate-900 rounded-xl group-hover:bg-transparent w-full uppercase tracking-widest">
-                        כניסה למערכת
+                        Sign In
                     </span>
                 </button>
             </form>
 
             <div class="mt-8 pt-6 border-t border-slate-800 text-center">
                 <p class="text-slate-500 text-sm font-medium">
-                    עדיין אין לך חשבון? 
-                    <a href="{% url 'register' %}" class="text-blue-400 font-bold hover:text-blue-300 transition-colors underline underline-offset-4 mr-1">צור חשבון חדש</a>
+                    Don't have an account?
+                    <a href="{% url 'register' %}" class="text-blue-400 font-bold hover:text-blue-300 transition-colors underline underline-offset-4 ml-1">Create an account</a>
                 </p>
             </div>
         </div>
@@ -44,7 +44,7 @@
 </div>
 
 <style>
-    /* עיצוב אחיד לשדות של Django - זהה לדף ההרשמה */
+    /* Uniform styling for Django fields */
     .django-custom-form p {
         margin-bottom: 1.5rem;
         display: flex;
@@ -58,7 +58,7 @@
         color: #94a3b8; /* text-slate-400 */
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        margin-right: 0.5rem;
+        margin-left: 0.5rem; /* Switched from margin-right */
     }
 
     .django-custom-form input {
@@ -86,14 +86,14 @@
         padding: 0;
     }
 
-    /* אנימציית כניסה ייחודית */
+    /* Animation */
     .animate-login {
         opacity: 0;
-        animation: fadeInRight 0.8s ease-out forwards;
+        animation: fadeInLeft 0.8s ease-out forwards;
     }
 
-    @keyframes fadeInRight {
-        from { opacity: 0; transform: translateX(30px); }
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-30px); } /* Switched from translateX(30px) */
         to { opacity: 1; transform: translateX(0); }
     }
 </style>

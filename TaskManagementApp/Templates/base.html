@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת ניהול משימות | TaskMaster</title>
+    <title>Task Management System | TaskMaster</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;600;700;800&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
             {% if user.is_authenticated %}
             <div class="flex items-center gap-6">
                 <div class="hidden md:flex flex-col text-right">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none mb-1">משתמש מחובר</span>
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none mb-1">Connected User</span>
                     <span class="text-sm font-black text-white flex items-center gap-2">
                         {{ user.username }}
                         <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse"></div>
@@ -58,7 +58,7 @@
                 <form action="{% url 'logout' %}" method="post" class="m-0">
                     {% csrf_token %}
                     <button type="submit" class="group flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-rose-500/50 hover:bg-rose-500/10 transition-all duration-300">
-                        <span class="text-xs font-bold text-slate-400 group-hover:text-rose-400 transition-colors">התנתקות</span>
+                        <span class="text-xs font-bold text-slate-400 group-hover:text-rose-400 transition-colors">Log Out</span>
                         <svg class="w-4 h-4 text-slate-500 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
