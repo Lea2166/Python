@@ -13,20 +13,19 @@ class TaskForm(forms.ModelForm):
             'Due_Date': forms.DateInput(attrs={
     'class': 'bg-slate-800 border border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none transition-all custom-calendar-input',
     'type': 'date',
-    'placeholder': 'בחר תאריך יעד...'
+    'placeholder': 'Select due date...'
 }),
         }
 class AdminTaskForm(forms.ModelForm):
-    # הוספת שדות בחירה עם עיצוב כהה
     AssignedUser = forms.ModelChoiceField(
         queryset=User.objects.all(),
         required=False,
-        label="שייך לעובד",
+        label="Assign to employee",
         widget=forms.Select(attrs={'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-3'})
     )
     Teams = forms.ModelChoiceField(
         queryset=Teams.objects.all(),
-        label="צוות",
+        label="Team",
         widget=forms.Select(attrs={'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-3'})
     )
 
@@ -44,15 +43,13 @@ class CompleteProfileForm(forms.ModelForm):
         model = Profile
         fields = ['role']
         labels = {
-            'team': 'בחר את הצוות שלך',
-            'role': 'מה התפקיד שלך במערכת?',
+            'team': 'Choose your team',
+            'role': 'What is your role in the system?',
         }
         widgets = {
-            # עיצוב רשימת הבחירה של הצוותים
             'team': forms.Select(attrs={
                 'class': 'bg-slate-800 border border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 transition-all outline-none appearance-none'
             }),
-            # עיצוב רשימת הבחירה של התפקידים
             'role': forms.Select(attrs={
                 'class': 'bg-slate-800 border border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 transition-all outline-none appearance-none'
             }),

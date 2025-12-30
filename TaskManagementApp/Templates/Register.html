@@ -75,28 +75,7 @@
 </div>
 
 <style>
-    /* Styling for Django password/help text to be white/readable */
-    .help-text-area,
-    .help-text-area p,
-    .help-text-area span,
-    .helptext {
-        color: rgba(255, 255, 255, 0.7) !important;
-        font-size: 0.75rem !important;
-        line-height: 1.4 !important;
-        display: block !important;
-        margin-top: 0.5rem !important;
-    }
-
-    /* List styling if Django injects help text as ul/li */
-    .help-text-area ul {
-        color: rgba(255, 255, 255, 0.6) !important;
-        font-size: 0.7rem !important;
-        padding-left: 1rem !important;
-        list-style-type: disc !important;
-    }
-
-    /* Styling for Django input fields */
-    input {
+   input {
         background-color: rgba(30, 41, 59, 0.5) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         color: white !important;
@@ -112,6 +91,26 @@
         background-color: rgba(15, 23, 42, 0.8) !important;
         border-color: #a855f7 !important;
         box-shadow: 0 0 20px rgba(168, 85, 247, 0.1) !important;
+    }
+
+    /* תיקון אגרסיבי לכל טקסט עזרה או הסבר שמופיע בטופס */
+    .group p,
+    .group span,
+    .group ul,
+    .group li,
+    .helptext,
+    .help-text-area {
+        color: rgba(255, 255, 255, 0.7) !important; /* לבן עם שקיפות עדינה */
+        font-size: 0.75rem !important;
+        line-height: 1.4 !important;
+        margin-top: 0.5rem !important;
+        list-style-position: inside !important;
+    }
+
+    /* וידוא שרשימות (ul/li) של דג'אנגו לא נצבעות בשחור */
+    .group ul li {
+        color: rgba(255, 255, 255, 0.7) !important;
+        margin-bottom: 2px !important;
     }
 
     @keyframes slideUp {

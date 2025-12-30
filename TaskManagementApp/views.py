@@ -14,13 +14,10 @@ from .forms import TaskForm, AdminTaskForm,CompleteProfileForm
 
 def login_view(request):
     if request.method == 'POST':
-        # שליחת נתוני הטופס לאימות
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            # שליפת המשתמש שאומת בהצלחה
             user = form.get_user()
             login(request, user)
-            # מעבר לדף המשימות של הצוות
             return redirect('alltasks')
     else:
         form = AuthenticationForm()
@@ -59,7 +56,6 @@ def finish_task(request, task_id):
 def task_list(request):
     user_profile = request.user.profile
 
-    # מנהל רואה הכל כברירת מחדל, עובד רואה רק את הצוות שלו
     if user_profile.role == 'ADMIN':
         tasks = Task.objects.all().order_by('Due_Date')
         team_name = "All System Tasks"
@@ -69,7 +65,6 @@ def task_list(request):
         tasks = Task.objects.filter(Teams=user_profile.team).order_by('Due_Date')
         team_name = user_profile.team.Name
 
-    # לוגיקת סינונים (נשארת דומה, רק מוסיפים אפשרות לסינון צוות למנהל אם תרצו בעתיד)
     owner_filter = request.GET.get('owner', 'all')
     if owner_filter == 'mine':
         tasks = tasks.filter(AssignedUser=request.user)
@@ -128,7 +123,7 @@ def add_task(request):
             return redirect('alltasks')
     else:
         form = form_class()
-    return render(request, 'task_form.html', {'form': form, 'title': 'יצירת משימה חדשה'})
+    return render(request, 'task_form.html', {'form': form, 'title': 'Create New Task'})
 @login_required
 @admin_only
 def edit_task(request, task_id):
@@ -144,20 +139,18 @@ def edit_task(request, task_id):
             return redirect('alltasks')
     else:
         form = TaskForm(instance=task)
-    return render(request, 'task_form.html', {'form': form, 'title': 'עריכת משימה'})
+    return render(request, 'task_form.html', {'form': form, 'title': 'Task Editor'})
 @admin_only
 @login_required
 def delete_task(request, task_id):
-    """מחיקת משימה - רק אם לא משויכת לאף עובד"""
     task = get_object_or_404(Task, Id=task_id)
 
-    # בדיקה שהמשימה לא משויכת ושהמשתמש מנהל (או לפי הצורך שלכן)
     if not task.AssignedUser:
         task.delete()
 
     return redirect('alltasks')
 @login_required
 def logout_view(request):
-    logout(request) # מוחק את ה-Session של המשתמש
+    logout(request)
     messages.info(request, "התנתקת מהמערכת בהצלחה.")
     return redirect('/')
