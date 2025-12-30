@@ -33,10 +33,8 @@ class Task(models.Model):
     Name = models.CharField(max_length=100)
     Description = models.TextField()
     Due_Date = models.DateField()
-    Status = models.CharField(choices=TASK_STATUS, max_length=20)
-    AssignedUser = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    Status = models.CharField(choices=TASK_STATUS, max_length=20,default="NEW")
+    AssignedUser = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    Teams = models.ForeignKey(Teams, on_delete=models.CASCADE)
     def __str__(self):
         return str(self.Name) # מחזיר את שם המשימה
-
-
