@@ -1,27 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="flex justify-center items-center min-h-[80-vh]">
-    <div class="w-full max-w-md p-8 bg-white border border-gray-200 rounded-xl shadow-lg">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">התחברות למערכת</h2>
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            {{ form.as_p }} <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 transition">
-                כניסה
-            </button>
-        </form>
-        <p class="mt-4 text-sm text-gray-500 text-center">
-            עוד לא רשום? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">צור חשבון חדש</a>
-        </p>
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6" dir="rtl">
+    <div class="max-w-md w-full animate-login">
+        
+        <div class="text-center mb-10">
+            <div class="inline-flex p-4 rounded-3xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-4 shadow-lg shadow-blue-500/10">
+                <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-black text-white tracking-tight">ברוכים השבים</h1>
+            <p class="text-slate-400 mt-2 font-medium">התחברו כדי לנהל את המשימות שלכם</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-600/10 blur-[80px] rounded-full"></div>
+            
+            <form method="post" class="space-y-6 relative django-custom-form">
+                {% csrf_token %}
+                
+                <div class="space-y-4 text-right">
+                    {{ form.as_p }}
+                </div>
+
+                <button type="submit" class="w-full relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-black rounded-xl group bg-gradient-to-br from-blue-600 to-purple-500 text-white transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20 mt-4">
+                    <span class="relative px-6 py-4 transition-all ease-in duration-75 bg-slate-900 rounded-xl group-hover:bg-transparent w-full uppercase tracking-widest">
+                        כניסה למערכת
+                    </span>
+                </button>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-800 text-center">
+                <p class="text-slate-500 text-sm font-medium">
+                    עדיין אין לך חשבון? 
+                    <a href="{% url 'register' %}" class="text-blue-400 font-bold hover:text-blue-300 transition-colors underline underline-offset-4 mr-1">צור חשבון חדש</a>
+                </p>
+            </div>
+        </div>
+
+        <p class="text-center text-slate-700 text-[10px] mt-8 uppercase tracking-[0.4em] font-black">Secure Authentication Module</p>
     </div>
 </div>
+
+<style>
+    /* עיצוב אחיד לשדות של Django - זהה לדף ההרשמה */
+    .django-custom-form p {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .django-custom-form label {
+        font-size: 0.75rem;
+        font-weight: 900;
+        color: #94a3b8; /* text-slate-400 */
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-right: 0.5rem;
+    }
+
+    .django-custom-form input {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: white !important;
+        border-radius: 0.75rem !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        outline: none !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .django-custom-form input:focus {
+        border-color: #3b82f6 !important; /* blue-500 */
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .django-custom-form .errorlist {
+        color: #f43f5e;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        list-style: none;
+        padding: 0;
+    }
+
+    /* אנימציית כניסה ייחודית */
+    .animate-login {
+        opacity: 0;
+        animation: fadeInRight 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+</style>
 {% endblock %}
-</body>
-</html>

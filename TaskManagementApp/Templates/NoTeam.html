@@ -1,38 +1,83 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-[70vh] bg-slate-900 rounded-3xl p-8">
-    <div class="max-w-md w-full text-center space-y-8">
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6" dir="rtl">
+    <div class="max-w-md w-full animate-task">
 
-        <div class="mx-auto w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 shadow-2xl">
-            <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-        </div>
-
-        <div class="space-y-4">
-            <h2 class="text-3xl font-extrabold text-white tracking-tight">
-                Access Restricted
-            </h2>
-            <p class="text-slate-400 text-lg leading-relaxed">
-                You currently do not have permission to view tasks. This account is not yet assigned to an active team.
-            </p>
-        </div>
-
-        <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl">
-            <div class="flex items-center space-x-3 space-x-reverse">
-                <svg class="w-5 h-5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM5.8 5.146a.5.5 0 01.708 0L7.214 5.86a.5.5 0 01-.708.708l-.707-.707a.5.5 0 010-.708zM10 11a2 2 0 100-4 2 2 0 000 4zM4.5 9a.5.5 0 01.5-.5h1a.5.5 0 010 1H5a.5.5 0 01-.5-.5zm10.5.5a.5.5 0 01.5-.5h1a.5.5 0 010 1h-1a.5.5 0 01-.5-.5zM8.146 13.492a.5.5 0 01.708 0l.707.707a.5.5 0 01-.708.708l-.707-.707a.5.5 0 010-.708zM10 15a1 1 0 100 2v1a1 1 0 100-2v-1z" clip-rule="evenodd" />
+        <div class="text-center mb-8">
+            <div class="inline-flex p-4 rounded-3xl bg-purple-500/10 border border-purple-500/20 mb-4">
+                <svg class="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
-                <span class="text-sm text-slate-300 font-medium">Please contact your Administrator for team placement.</span>
             </div>
+            <h1 class="text-3xl font-black text-white tracking-tight">שלום {{ user_name }}!</h1>
+            <p class="text-slate-400 mt-2 text-sm">הגדר את התפקיד שלך במערכת</p>
         </div>
 
-        <div class="pt-4">
-            <button onclick="window.location.reload()" class="w-full py-3 px-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all duration-300 shadow-lg shadow-indigo-900/20 transform hover:-translate-y-1">
-                Check Status Again
-            </button>
+        <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl">
+            <form method="post" id="profileForm" class="space-y-8">
+                {% csrf_token %}
+
+                <div class="space-y-3">
+                    <label class="text-xs font-black text-purple-400 uppercase tracking-widest mr-1">סוג משתמש</label>
+                    <div class="relative">
+                        <select name="role" id="roleSelect" required class="bg-slate-800 border border-slate-700 text-white rounded-xl w-full h-[60px] px-4 outline-none focus:ring-2 focus:ring-purple-500 transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected>בחר תפקיד...</option>
+                            <option value="ADMIN">מנהל (ADMIN)</option>
+                            <option value="EMPLOYEE">עובד (EMPLOYEE)</option>
+                        </select>
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="teamSection" class="space-y-3 hidden transition-all duration-500">
+                    <label class="text-xs font-black text-blue-400 uppercase tracking-widest mr-1">שיוך לצוות עבודה</label>
+                    <div class="relative">
+                        <select name="team" id="teamSelect" class="bg-slate-800 border border-slate-700 text-white rounded-xl w-full h-[60px] px-4 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected>בחר צוות...</option>
+                            {% for team in all_teams %}
+                                <option value="{{ team.Id }}">{{ team.Name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-black rounded-2xl group bg-gradient-to-br from-purple-600 to-blue-500 text-white transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-purple-900/20">
+                    <span class="relative px-6 py-5 transition-all ease-in duration-75 bg-slate-900 rounded-[14px] group-hover:bg-transparent w-full uppercase tracking-widest text-center">
+                        שמור והמשך
+                    </span>
+                </button>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    const roleSelect = document.getElementById('roleSelect');
+    const teamSection = document.getElementById('teamSection');
+    const teamSelect = document.getElementById('teamSelect');
+
+    roleSelect.addEventListener('change', function() {
+        if (this.value === 'EMPLOYEE') {
+            teamSection.classList.remove('hidden');
+            teamSelect.setAttribute('required', 'true');
+        } else {
+            teamSection.classList.add('hidden');
+            teamSelect.removeAttribute('required');
+            teamSelect.value = ""; // איפוס בחירה אם נבחר מנהל
+        }
+    });
+</script>
+
+<style>
+    select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+    option { background-color: #1e293b; color: white; }
+    .animate-task { animation: fadeInUp 0.8s ease-out forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 {% endblock %}

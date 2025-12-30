@@ -8,48 +8,47 @@ from .models import Task, Profile,Teams
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import TaskForm, AdminTaskForm
+from .forms import TaskForm, AdminTaskForm,CompleteProfileForm
 
 
 @login_required
-def task_list(request):
-    user_profile = request.user.profile
-    user_team = user_profile.team
-    if user_team is None:
-        return render(request, 'NoTeam.html')
-
-    tasks = Task.objects.filter(Teams=user_team).order_by('Due_Date')
-
-    # לוגיקת סינון
-    owner_filter = request.GET.get('owner', 'all')
-    if owner_filter == 'mine':
-        tasks = tasks.filter(AssignedUser=request.user)
-
-    status_filter = request.GET.get('status', 'all')
-    if status_filter != 'all':
-        tasks = tasks.filter(Status=status_filter)
-
-    # רשימות סינון למניעת שגיאת TemplateSyntaxError
-    owner_options = [('all', 'כל הצוות'), ('mine', 'המשימות שלי')]
-    status_options = [
-        ('all', 'הכל'),
-        ('NEW', 'חדש'),
-        ('IN_PROGRESS', 'בביצוע'),
-        ('COMPLETED', 'הושלם')
-    ]
-
-    context = {
-        'tasks': tasks,
-        'team_name': user_team.Name,
-        'owner_filter': owner_filter,
-        'status_filter': status_filter,
-        'owner_options': owner_options,
-        'status_options': status_options,
-        'user_role': user_profile.role,
-    }
-    return render(request, 'AllTasks.html', context)
-def NoTeams(request):
-    return render(request, 'NoTeam.html')
+# def task_list(request):
+#     user_profile = request.user.profile
+#     user_team = user_profile.team
+#     if user_team is None:
+#         return redirect(complete_profile)
+#
+#     tasks = Task.objects.filter(Teams=user_team).order_by('Due_Date')
+#
+#     # לוגיקת סינון
+#     owner_filter = request.GET.get('owner', 'all')
+#     if owner_filter == 'mine':
+#         tasks = tasks.filter(AssignedUser=request.user)
+#
+#     status_filter = request.GET.get('status', 'all')
+#     if status_filter != 'all':
+#         tasks = tasks.filter(Status=status_filter)
+#
+#     # רשימות סינון למניעת שגיאת TemplateSyntaxError
+#     owner_options = [('all', 'כל הצוות'), ('mine', 'המשימות שלי')]
+#     status_options = [
+#         ('all', 'הכל'),
+#         ('NEW', 'חדש'),
+#         ('IN_PROGRESS', 'בביצוע'),
+#         ('COMPLETED', 'הושלם')
+#     ]
+#
+#     context = {
+#         'tasks': tasks,
+#         'team_name': user_team.Name,
+#         'owner_filter': owner_filter,
+#         'status_filter': status_filter,
+#         'owner_options': owner_options,
+#         'status_options': status_options,
+#         'user_role': user_profile.role,
+#     }
+#     return render(request, 'AllTasks.html', context)
+#
 
 def login_view(request):
     if request.method == 'POST':
@@ -104,7 +103,7 @@ def task_list(request):
         team_name = "כל המשימות במערכת"
     else:
         if user_profile.team is None and user_profile.role != 'ADMIN':
-            return render(request, 'NoTeam.html')
+            return redirect(complete_profile)
         tasks = Task.objects.filter(Teams=user_profile.team).order_by('Due_Date')
         team_name = user_profile.team.Name
 
@@ -130,6 +129,30 @@ def task_list(request):
 
 
 @login_required
+@login_required
+def complete_profile(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        selected_role = request.POST.get('role')
+        selected_team_id = request.POST.get('team')
+
+        if selected_role:
+            profile.role = selected_role
+            # אם הוא עובד - נשמור את הצוות. אם הוא מנהל - נשמור None
+            if selected_role == 'EMPLOYEE' and selected_team_id:
+                profile.team = Teams.objects.get(Id=selected_team_id)
+            else:
+                profile.team = None
+
+            profile.save()
+            return redirect('alltasks')
+
+    all_teams = Teams.objects.all()
+    return render(request, 'NoTeam.html', {
+        'all_teams': all_teams,
+        'user_name': request.user.username
+    })
 def add_task(request):
     is_admin = request.user.profile.role == 'ADMIN'
     form_class = AdminTaskForm if is_admin else TaskForm

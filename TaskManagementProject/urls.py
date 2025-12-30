@@ -9,7 +9,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('alltasks/', views.task_list, name='alltasks'),
-    path('NoTeam', views.NoTeams, name='NoTeam'),
+    path('complete_profile', views.complete_profile, name='complete_profile'),
     path('claim-task/<int:task_id>/', views.claim_task, name='claim_task'),
     path('finish_task/<int:task_id>/', views.finish_task, name='finish_task'),
 
