@@ -101,9 +101,9 @@ def task_list(request):
     # מנהל רואה הכל כברירת מחדל, עובד רואה רק את הצוות שלו
     if user_profile.role == 'ADMIN':
         tasks = Task.objects.all().order_by('Due_Date')
-        team_name = "כלל המשימות במערכת"
+        team_name = "כל המשימות במערכת"
     else:
-        if user_profile.team is None:
+        if user_profile.team is None and user_profile.role != 'ADMIN':
             return render(request, 'NoTeam.html')
         tasks = Task.objects.filter(Teams=user_profile.team).order_by('Due_Date')
         team_name = user_profile.team.Name
@@ -146,3 +146,30 @@ def add_task(request):
     else:
         form = form_class()
     return render(request, 'task_form.html', {'form': form, 'title': 'יצירת משימה חדשה'})
+
+
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, Id=task_id)
+
+    if task.AssignedUser:
+        return redirect('alltasks')
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('alltasks')
+    else:
+        form = TaskForm(instance=task)
+    return render(request, 'task_form.html', {'form': form, 'title': 'עריכת משימה'})
+
+@login_required
+def delete_task(request, task_id):
+    """מחיקת משימה - רק אם לא משויכת לאף עובד"""
+    task = get_object_or_404(Task, Id=task_id)
+
+    # בדיקה שהמשימה לא משויכת ושהמשתמש מנהל (או לפי הצורך שלכן)
+    if not task.AssignedUser:
+        task.delete()
+
+    return redirect('alltasks')
