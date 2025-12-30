@@ -1,57 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 {% extends 'base.html' %}
 
 {% block content %}
-   <div class="bg-white shadow-md rounded-lg p-6">
-       <h1 class="text-2xl font-bold mb-4">רשימת משימות</h1>
-       ...
-   </div>
-{% endblock %}
-<div class="w-full max-w-2xl p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-    <h5 class="text-xl font-semibold text-gray-900 mb-6">משימות הצוות: {{ user.profile.team.Name }}</h5>
-    <div class="flow-root">
-        <ul role="list" class="divide-y divide-gray-100">
-            {% for task in tasks %}
-            <li class="py-4">
-                <div class="flex items-center gap-4">
-                    <div class="shrink-0">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center
-                            {% if task.Status == 'NEW' %} bg-blue-100 text-blue-600
-                            {% elif task.Status == 'IN_PROGRESS' %} bg-orange-100 text-orange-600
-                            {% else %} bg-green-100 text-green-600 {% endif %}">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+<div class="space-y-6">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-2xl font-bold text-gray-800">רשימת משימות</h1>
+        <p class="text-gray-600">צוות: {{ user.profile.team.Name|default:"כללי" }}</p>
+    </div>
+
+    <div class="w-full max-w-4xl p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+        <h5 class="text-xl font-semibold text-gray-900 mb-6">משימות פעילות</h5>
+        <div class="flow-root">
+            <ul role="list" class="divide-y divide-gray-100">
+                {% for task in tasks %}
+                <li class="py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="shrink-0">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center
+                                {% if task.Status == 'NEW' %} bg-blue-100 text-blue-600
+                                {% elif task.Status == 'IN_PROGRESS' %} bg-orange-100 text-orange-600
+                                {% else %} bg-green-100 text-green-600 {% endif %}">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 min-w-0 text-right">
+                            <p class="font-medium text-gray-900 truncate">{{ task.Name }}</p>
+                            <p class="text-sm text-gray-500 truncate">יעד: {{ task.Due_Date|date:"d/m/Y" }} | מבצע: {{ task.AssignedUser.username|default:"טרם שויך" }}</p>
+                        </div>
+
+                        <div class="inline-flex items-center gap-2">
+                            {% if not task.AssignedUser and user.profile.role == 'EMPLOYEE' %}
+                                <button class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">שייך אלי</button>
+                            {% endif %}
+
+                            {% if user.profile.role == 'ADMIN' %}
+                                <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
-
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-gray-900 truncate">{{ task.Name }}</p>
-                        <p class="text-sm text-gray-500 truncate">יעד: {{ task.Due_Date }} | מבצע: {{ task.AssignedUser.username|default:"טרם שויך" }}</p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-2">
-                        {% if not task.AssignedUser and user.profile.role == 'EMPLOYEE' %}
-                            <button class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">שייך אלי</button>
-                        {% endif %}
-
-                        {% if user.profile.role == 'ADMIN' and not task.AssignedUser %}
-                            <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        {% endif %}
-                    </div>
+                </li>
+                {% empty %}
+                <div class="text-center py-10">
+                    <p class="text-gray-500 italic">לא נמצאו משימות לצוות שלך.</p>
                 </div>
-            </li>
-            {% empty %}
-            <p class="text-center text-gray-500 py-4">אין משימות להצגה כרגע.</p>
-            {% endfor %}
-        </ul>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
-</body>
-</html>
+{% endblock %}
