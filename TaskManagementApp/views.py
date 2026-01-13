@@ -12,9 +12,8 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Task, Profile,Teams
 from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import TaskForm, AdminTaskForm,CompleteProfileForm
+from .forms import TaskForm, AdminTaskForm
 from django.contrib import messages
 
 def login_view(request):

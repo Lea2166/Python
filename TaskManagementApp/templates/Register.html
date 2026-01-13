@@ -57,8 +57,10 @@
                 </div>
                 {% endfor %}
 
-                <button type="submit" class="w-full py-4 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-purple-50 transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl mt-4">
-                    Create New Account
+                <button type="submit" class="w-full relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-black rounded-xl group bg-gradient-to-br from-blue-600 to-purple-500 text-white transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20 mt-4">
+                    <span class="relative px-6 py-4 transition-all ease-in duration-75 bg-slate-900 rounded-xl group-hover:bg-transparent w-full uppercase tracking-widest">
+                        Create New Account
+                    </span>
                 </button>
             </form>
 
@@ -93,21 +95,14 @@
         box-shadow: 0 0 20px rgba(168, 85, 247, 0.1) !important;
     }
 
-    /* תיקון אגרסיבי לכל טקסט עזרה או הסבר שמופיע בטופס */
-    .group p,
-    .group span,
-    .group ul,
-    .group li,
-    .helptext,
-    .help-text-area {
-        color: rgba(255, 255, 255, 0.7) !important; /* לבן עם שקיפות עדינה */
+    .group p, .group span, .group ul, .group li, .helptext, .help-text-area {
+        color: rgba(255, 255, 255, 0.7) !important;
         font-size: 0.75rem !important;
         line-height: 1.4 !important;
-        margin-top: 0.5rem !important;
+        margin-top: 2px !important;
         list-style-position: inside !important;
     }
 
-    /* וידוא שרשימות (ul/li) של דג'אנגו לא נצבעות בשחור */
     .group ul li {
         color: rgba(255, 255, 255, 0.7) !important;
         margin-bottom: 2px !important;

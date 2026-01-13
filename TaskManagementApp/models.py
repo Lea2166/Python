@@ -1,8 +1,6 @@
 from django.db import models
-from django.db.models import Model
 from django.contrib.auth.models import User
 
-# Create your models here.
 USER_ROLES = [
     ('ADMIN', 'מנהל'),
     ('EMPLOYEE', 'עובד'),
@@ -17,7 +15,7 @@ class Teams(models.Model):
     Name = models.CharField(max_length=100)
 
     def __str__(self):
-        return str(self.Name) # מחזיר את שם הצוות
+        return str(self.Name)
 
 class Profile(models.Model):
     Id = models.AutoField(primary_key=True)
@@ -26,7 +24,7 @@ class Profile(models.Model):
     role = models.CharField(choices=USER_ROLES, max_length=20,default="EMPLOYEE")
 
     def __str__(self):
-        return str(self.User.username) # מחזיר את שם המשתמש
+        return str(self.User.username)
 
 class Task(models.Model):
     Id = models.AutoField(primary_key=True)
@@ -37,4 +35,4 @@ class Task(models.Model):
     AssignedUser = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     Teams = models.ForeignKey(Teams, on_delete=models.CASCADE)
     def __str__(self):
-        return str(self.Name) # מחזיר את שם המשימה
+        return str(self.Name)
