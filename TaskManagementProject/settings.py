@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6s*i#1k1*2)g7flh74=xaa_)o#)1)hif9*ev_9a0m%v#@#&+mo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+DEBUG = False  # שנה ל-False כדי לראות את דפי השגיאה המעוצבים שלך
+
+ALLOWED_HOSTS = ['*'] # חובה להגדיר כשה-DEBUG הוא False (בפיתוח אפשר '*' ובשרת את הדומיין)
 
 
 # Application definition
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'TaskManagementProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,5 +115,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
+CSRF_FAILURE_VIEW = 'TaskManagementApp.views.error_403'
 
 STATIC_URL = 'static/'

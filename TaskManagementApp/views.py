@@ -2,17 +2,25 @@ from contextlib import nullcontext
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+
 from .decorators import admin_only
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, get_object_or_404
+
+
 from django.contrib.auth.decorators import login_required
 from .models import Task, Profile,Teams
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import TaskForm, AdminTaskForm,CompleteProfileForm
+from django.contrib import messages
 
 def login_view(request):
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in as " + request.user.username)
+        return redirect('alltasks')
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -154,3 +162,35 @@ def logout_view(request):
     logout(request)
     messages.info(request, "התנתקת מהמערכת בהצלחה.")
     return redirect('/')
+
+from django.http import JsonResponse
+
+@login_required
+@admin_only
+def get_employees_by_team(request):
+    team_id = request.GET.get('team_id')
+    # שליפת כל המשתמשים שמשויכים לצוות הספציפי דרך ה-Profile
+    employees = User.objects.filter(profile__team_id=team_id, profile__role='EMPLOYEE').values('id', 'username')
+    return JsonResponse(list(employees), safe=False)
+from django.shortcuts import render
+
+def error_404(request, exception):
+    return render(request, 'error_page.html', {
+        'status_code': '404',
+        'title': 'Page Not Found',
+        'message': 'Sorry, we could not find the page you were looking for.'
+    }, status=404)
+
+def error_500(request):
+    return render(request, 'error_page.html', {
+        'status_code': '500',
+        'title': 'Server Error',
+        'message': 'An internal server error occurred, we are working on it!'
+    }, status=500)
+
+def error_403(request,exception=None, reason=""):
+    return render(request, 'error_page.html', {
+        'status_code': '403',
+        'title': 'Permission Denied',
+        'message': 'You do not have permission to access this page (or your token has expired).'
+    }, status=403)
