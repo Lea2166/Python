@@ -168,9 +168,38 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const userSelect = document.querySelector('select[name="AssignedUser"]');
+    const teamSelect = document.querySelector('select[name="Teams"]');
+
+    // אם אנחנו במצב של "הוספת משימה חדשה" (כלומר לא נבחר צוות עדיין)
+    if (!teamSelect.value) {
+        userSelect.innerHTML = '<option value="">---------</option>';
+    }
+});
     flatpickr("input[type='date']", {
         dateFormat: "Y-m-d",
-        disableMobile: "true"
+        disableMobile: "true",
+        minDate: "today", // הגבלה מהיום והלאה
     });
+document.querySelector('select[name="Teams"]').addEventListener('change', function() {
+    const teamId = this.value;
+    const userSelect = document.querySelector('select[name="AssignedUser"]');
+
+    // ניקוי הרשימה הנוכחית
+    userSelect.innerHTML = '<option value="">---------</option>';
+
+    if (teamId) {
+        // פנייה לשרת לקבלת העובדים של הצוות שנבחר
+        fetch(`/get-employees-by-team/?team_id=${teamId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(user => {
+                    const option = new Option(user.username, user.id);
+                    userSelect.add(option);
+                });
+            });
+    }
+});
 </script>
 {% endblock %}
