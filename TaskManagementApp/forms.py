@@ -10,7 +10,6 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'Name': forms.TextInput(attrs={'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none'}),
             'Description': forms.Textarea(attrs={'class': 'bg-slate-800 border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none', 'rows': 3}),
-            # הגדרת לוח השנה
             'Due_Date': forms.DateInput(attrs={
     'class': 'bg-slate-800 border border-slate-700 text-white rounded-xl w-full p-4 focus:ring-2 focus:ring-purple-500 outline-none transition-all custom-calendar-input',
     'type': 'date',
@@ -39,14 +38,12 @@ class AdminTaskForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # סינון ראשוני: רק משתמשים שיש להם פרופיל והם לא אדמינים
         self.fields['AssignedUser'].queryset = User.objects.filter(profile__role='EMPLOYEE')
     def clean(self):
         cleaned_data = super().clean()
         team = cleaned_data.get("Teams")
         user = cleaned_data.get("AssignedUser")
         if team and user:
-            # בדיקה האם העובד שנבחר באמת שייך לצוות שנבחר
             if user.profile.team != team:
                 raise forms.ValidationError("העובד שנבחר אינו משויך לצוות שנבחר!")
         return cleaned_data
